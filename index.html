@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聊天机器人</title>
+    <style>
+        /* 样式可以自定义 */
+        body { font-family: Arial, sans-serif; }
+        #chatbox { width: 400px; height: 400px; border: 1px solid #ccc; padding: 10px; overflow-y: scroll; }
+        #input-box { width: 80%; padding: 5px; }
+        #send-button { padding: 5px; }
+    </style>
+</head>
+<body>
+    <h1>与聊天机器人对话</h1>
+    <div id="chatbox"></div>
+    <input type="text" id="input-box" placeholder="输入您的消息...">
+    <button id="send-button">发送</button>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const apiUrl = 'https://api.dify.ai/v1';  // 使用Dify的API URL
+        const apiKey = 'YOUR_API_KEY';  // 替换为你的API密钥
+
+        $('#send-button').click(function() {
+            const message = $('#input-box').val();
+            if (message.trim() === '') return;
+
+            // 显示用户消息
+            $('#chatbox').append('<div>你: ' + message + '</div>');
+
+            // 发送消息到Dify API
+            $.ajax({
+                url: apiUrl,
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer ' + apiKey,
+                    'Content-Type': 'application/json'
+                },
+                data: JSON.stringify({ message: message }),  // 发送消息
+                success: function(response) {
+                    $('#chatbox').append('<div>机器人: ' + response.reply + '</div>');
+                },
+                error: function(error) {
+                    console.error(error);
+                    $('#chatbox').append('<div>机器人: 出现了问题，请稍后再试。</div>');
+                }
+            });
+
+            // 清空输入框
+            $('#input-box').val('');
+        });
+    </script>
+</body>
+</html>
